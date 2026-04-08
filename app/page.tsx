@@ -19,12 +19,48 @@ const LUMA_EVENT_URL = `https://luma.com/event/${LUMA_EVENT_ID}`;
 
 export default function Home() {
   const partnerRef = useRef<HTMLElement>(null);
+  const heroVideoRef = useRef<HTMLVideoElement>(null);
   const [navMode, setNavMode] = useState<NavMode>("all");
   const { scrollYProgress: partnerScroll } = useScroll({
     target: partnerRef,
     offset: ["start end", "end start"],
   });
   const partnerImageY = useTransform(partnerScroll, [0, 1], ["-10%", "10%"]);
+
+  useEffect(() => {
+    const video = heroVideoRef.current;
+
+    if (!video) return;
+
+    const connection = (
+      navigator as Navigator & {
+        connection?: {
+          effectiveType?: string;
+          saveData?: boolean;
+        };
+      }
+    ).connection;
+    const shouldUseLowQuality =
+      connection?.saveData === true ||
+      connection?.effectiveType === "slow-2g" ||
+      connection?.effectiveType === "2g" ||
+      connection?.effectiveType === "3g";
+    const source = shouldUseLowQuality
+      ? video.dataset.srcLow
+      : video.dataset.srcDefault;
+
+    if (!source) return;
+
+    video.src = source;
+    video.load();
+    void video.play().catch(() => undefined);
+
+    return () => {
+      video.pause();
+      video.removeAttribute("src");
+      video.load();
+    };
+  }, []);
 
   useEffect(() => {
     const sections = Array.from(
@@ -135,17 +171,27 @@ export default function Home() {
 
       <section
         data-nav-mode="all"
-        className="sticky top-0 h-screen w-full bg-black flex flex-col justify-between p-6 md:p-10 overflow-hidden"
+        className="sticky top-0 h-dvh w-full bg-black flex flex-col justify-between p-6 md:p-10 overflow-hidden"
       >
         <div className="absolute inset-0 z-0">
-          <Image
-            src="https://picsum.photos/seed/fashionhero1/1920/1080?grayscale"
-            alt="Hero Background"
-            fill
-            className="object-cover opacity-40 scale-105"
-            priority
-          />
-          <div className="absolute inset-0 bg-linear-to-b from-black/20 via-transparent to-black"></div>
+          <video
+            ref={heroVideoRef}
+            data-src-default="/forgesummit-720.mp4"
+            data-src-low="/forgesummit-480.mp4"
+            poster="/hero-video.jpg"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="none"
+            aria-hidden="true"
+            disablePictureInPicture
+            disableRemotePlayback
+            className="h-full w-full object-cover opacity-55"
+          >
+            Your browser does not support the video tag.
+          </video>
+          <div className="absolute inset-0 bg-linear-to-b from-black/45 via-black/20 to-black"></div>
         </div>
 
         <div className="relative z-10 flex-1 flex flex-col justify-center items-center mt-20">
