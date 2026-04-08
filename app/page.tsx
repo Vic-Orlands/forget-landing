@@ -24,7 +24,7 @@ export default function Home() {
 
   useEffect(() => {
     const sections = Array.from(
-      document.querySelectorAll<HTMLElement>("[data-nav-mode]")
+      document.querySelectorAll<HTMLElement>("[data-nav-mode]"),
     );
 
     if (!sections.length) return;
@@ -55,7 +55,7 @@ export default function Home() {
       });
 
       setNavMode((currentMode) =>
-        currentMode === nextMode ? currentMode : nextMode
+        currentMode === nextMode ? currentMode : nextMode,
       );
     };
 
@@ -218,7 +218,7 @@ export default function Home() {
               whileInView={{ y: 0, opacity: 1 }}
               transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
               viewport={{ once: true }}
-              className="space-y-4 md:space-y-8 pt-12 lg:pt-24 *:grayscale *:hover:grayscale-0 *:transition-all *:duration-1000"
+              className="space-y-4 md:space-y-8 pt-12 lg:pt-24 *:opacity-80 *:hover:opacity-100 *:transition-opacity *:duration-500"
             >
               <div className="relative h-[60%] w-full overflow-hidden rounded-sm">
                 <Image
@@ -242,7 +242,7 @@ export default function Home() {
               whileInView={{ y: 0, opacity: 1 }}
               transition={{ duration: 1, delay: 0.4, ease: "easeOut" }}
               viewport={{ once: true }}
-              className="space-y-4 md:space-y-8 pb-12 lg:pb-24 *:grayscale *:hover:grayscale-0 *:transition-all *:duration-1000"
+              className="space-y-4 md:space-y-8 pb-12 lg:pb-24 *:opacity-80 *:hover:opacity-100 *:transition-opacity *:duration-500"
             >
               <div className="relative h-[40%] w-full overflow-hidden rounded-sm">
                 <Image
@@ -487,7 +487,7 @@ export default function Home() {
                     src={persona.imgSeed}
                     alt={persona.role}
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-1000 grayscale group-hover:grayscale-0"
+                    className="object-cover group-hover:scale-105 transition-all duration-1000 opacity-90 group-hover:opacity-100"
                   />
                   <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors duration-700" />
                   <span className="absolute top-5 right-5 text-xs font-black text-white/60 tracking-[0.3em]">
@@ -531,96 +531,6 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
-
-      {/* old why attend */}
-      {/* <section className="relative z-20 w-full bg-black text-white py-32 md:py-48 px-6 md:px-10">
-        <div className="max-w-350 mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-              className="lg:col-span-2 bg-zinc-900/40 border border-zinc-800/50 p-10 md:p-16 rounded-2xl flex flex-col justify-between overflow-hidden relative group"
-            >
-              <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl -mr-20 -mt-20 transition-transform duration-1000 group-hover:scale-150"></div>
-              <h2 className="font-display text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter uppercase mb-12 relative z-10">
-                Who&apos;s
-                <br />
-                It For?
-              </h2>
-              <p className="text-zinc-400 text-xl md:text-2xl leading-relaxed font-light max-w-xl relative z-10">
-                Invite-only senior leaders, founders, innovators, and
-                visionaries seeking actionable insights and high-value
-                connections.
-              </p>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              viewport={{ once: true }}
-              className="bg-zinc-900/40 border border-zinc-800/50 p-10 rounded-2xl relative overflow-hidden group min-h-100"
-            >
-              <Image
-                src="https://picsum.photos/seed/whosfor1/600/800?grayscale"
-                alt="Visionary"
-                fill
-                className="object-cover opacity-30 group-hover:opacity-60 transition-opacity duration-700 mix-blend-luminosity"
-              />
-              <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-transparent"></div>
-              <div className="absolute bottom-10 left-10 right-10">
-                <div className="text-3xl font-display font-bold uppercase tracking-widest">
-                  Founders
-                </div>
-                <div className="w-full h-px bg-zinc-700 my-4"></div>
-                <div className="text-xs text-zinc-400 uppercase tracking-widest">
-                  Pioneers of tomorrow
-                </div>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-              viewport={{ once: true }}
-              className="bg-zinc-900/40 border border-zinc-800/50 p-10 rounded-2xl relative overflow-hidden group min-h-100"
-            >
-              <Image
-                src="https://picsum.photos/seed/whosfor2/600/800?grayscale"
-                alt="Executives"
-                fill
-                className="object-cover opacity-30 group-hover:opacity-60 transition-opacity duration-700 mix-blend-luminosity"
-              />
-              <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-transparent"></div>
-              <div className="absolute bottom-10 left-10 right-10">
-                <div className="text-3xl font-display font-bold uppercase tracking-widest">
-                  Executives
-                </div>
-                <div className="w-full h-px bg-zinc-700 my-4"></div>
-                <div className="text-xs text-zinc-400 uppercase tracking-widest">
-                  Strategic decision makers
-                </div>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              viewport={{ once: true }}
-              className="lg:col-span-2 bg-zinc-900/40 border border-zinc-800/50 p-10 md:p-16 rounded-2xl flex items-center justify-center relative overflow-hidden group min-h-100"
-            >
-              <div className="absolute inset-0 bg-[url('https://picsum.photos/seed/whosfor3/1200/600?grayscale')] bg-cover bg-center opacity-20 group-hover:scale-105 transition-transform duration-1000"></div>
-              <h3 className="font-display text-4xl md:text-6xl font-bold uppercase tracking-tighter text-center relative z-10 text-white/90 mix-blend-overlay">
-                A Front-Row View of Tomorrow
-              </h3>
-            </motion.div>
-          </div>
-        </div>
-      </section> */}
 
       <section
         id="partner"
@@ -715,7 +625,7 @@ export default function Home() {
                   src="/partner.png"
                   alt="Partner network"
                   fill
-                  className="object-cover hover:scale-105 transition-transform duration-1000 grayscale hover:grayscale-0 mix-blend-luminosity opacity-80"
+                  className="object-cover hover:scale-105 transition-all duration-1000 opacity-90 hover:opacity-100"
                 />
                 <svg
                   className="absolute inset-0 w-full h-full pointer-events-none"
