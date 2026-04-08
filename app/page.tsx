@@ -20,6 +20,7 @@ const LUMA_EVENT_URL = `https://luma.com/event/${LUMA_EVENT_ID}`;
 export default function Home() {
   const partnerRef = useRef<HTMLElement>(null);
   const heroVideoRef = useRef<HTMLVideoElement>(null);
+  const lumaTriggerRef = useRef<HTMLAnchorElement>(null);
   const [navMode, setNavMode] = useState<NavMode>("all");
   const { scrollYProgress: partnerScroll } = useScroll({
     target: partnerRef,
@@ -59,6 +60,36 @@ export default function Home() {
       video.pause();
       video.removeAttribute("src");
       video.load();
+    };
+  }, []);
+
+  useEffect(() => {
+    const syncLumaOverlay = () => {
+      const overlay = document.querySelector<HTMLElement>(
+        ".luma-checkout--overlay",
+      );
+
+      document.body.classList.toggle("modalOpen", Boolean(overlay));
+      document.body.classList.toggle("lumaThemeActive", Boolean(overlay));
+    };
+
+    syncLumaOverlay();
+
+    const observer = new MutationObserver(() => {
+      syncLumaOverlay();
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    return () => {
+      observer.disconnect();
+      document.body.classList.remove("modalOpen");
+      document.body.classList.remove("lumaThemeActive");
     };
   }, []);
 
@@ -138,8 +169,29 @@ export default function Home() {
     return true;
   });
 
+  const openLumaCheckout = () => {
+    lumaTriggerRef.current?.dispatchEvent(
+      new MouseEvent("click", {
+        bubbles: true,
+        cancelable: true,
+        view: window,
+      }),
+    );
+  };
+
   return (
     <main className="relative bg-black w-full">
+      <a
+        ref={lumaTriggerRef}
+        href={LUMA_EVENT_URL}
+        className="luma-checkout--button absolute size-px overflow-hidden opacity-0 pointer-events-none"
+        data-luma-action="checkout"
+        data-luma-event-id={LUMA_EVENT_ID}
+        aria-hidden="true"
+        tabIndex={-1}
+      >
+        Open checkout
+      </a>
       <nav className="fixed top-0 left-0 right-0 z-50 flex justify-between items-center p-6 md:p-10 mix-blend-difference text-white pointer-events-none">
         <Link
           href="/"
@@ -148,21 +200,26 @@ export default function Home() {
           FORGETECH
         </Link>
         <div className="hidden md:flex gap-12 text-xs font-medium tracking-[0.2em] uppercase pointer-events-auto">
-          {visibleNavLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href === "#register" ? LUMA_EVENT_URL : link.href}
-              data-luma-action={
-                link.href === "#register" ? "checkout" : undefined
-              }
-              data-luma-event-id={
-                link.href === "#register" ? LUMA_EVENT_ID : undefined
-              }
-              className="hover:text-zinc-400 transition-colors"
-            >
-              {link.label}
-            </Link>
-          ))}
+          {visibleNavLinks.map((link) =>
+            link.href === "#register" ? (
+              <button
+                key={link.href}
+                type="button"
+                onClick={openLumaCheckout}
+                className="hover:text-zinc-400 transition-colors"
+              >
+                {link.label}
+              </button>
+            ) : (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="hover:text-zinc-400 transition-colors"
+              >
+                {link.label}
+              </Link>
+            ),
+          )}
         </div>
         <button className="md:hidden pointer-events-auto">
           <Menu className="w-6 h-6" />
@@ -260,7 +317,10 @@ export default function Home() {
             viewport={{ once: true, margin: "-20%" }}
           >
             <h2 className="font-display text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter uppercase mb-8 leading-[0.9]">
-              The
+              The{" "}
+              <span className="text-3xl tracking-tighter md:text-5xl font-display font-bold text-transparent bg-clip-text bg-linear-to-b from-[#dc85e7] to-[#cb30e0c6]">
+                forgetech
+              </span>
               <br />
               Experience
             </h2>
@@ -580,13 +640,14 @@ export default function Home() {
             <p className="text-4xl md:text-5xl font-black tracking-tight uppercase leading-tight max-w-md">
               Is This You?
             </p>
-            <a
-              href="#register"
+            <button
+              type="button"
+              onClick={openLumaCheckout}
               className="group inline-flex items-center gap-3 px-8 py-4 bg-black text-white text-xs uppercase font-bold tracking-[0.2em] rounded-full hover:bg-zinc-800 transition-colors duration-300"
             >
               Request Your Invite
               <ArrowUpRight className="w-4 h-4 group-hover:rotate-45 transition-transform duration-300" />
-            </a>
+            </button>
           </motion.div>
         </div>
       </section>
@@ -848,10 +909,9 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 0.4 }}
             viewport={{ once: true }}
           >
-            <Link
-              href={LUMA_EVENT_URL}
-              data-luma-action="checkout"
-              data-luma-event-id={LUMA_EVENT_ID}
+            <button
+              type="button"
+              onClick={openLumaCheckout}
               className="group relative inline-flex items-center justify-center px-10 py-5 bg-white text-black font-bold uppercase tracking-[0.2em] text-sm overflow-hidden rounded-full"
             >
               <span className="relative z-10 flex items-center gap-3">
@@ -859,7 +919,7 @@ export default function Home() {
                 <ArrowUpRight className="w-5 h-5 group-hover:rotate-45 transition-transform duration-300" />
               </span>
               <div className="absolute inset-0 bg-zinc-200 transform scale-x-0 origin-left group-hover:scale-x-100 transition-transform ease-out duration-500"></div>
-            </Link>
+            </button>
           </motion.div>
 
           <motion.div

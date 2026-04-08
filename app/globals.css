@@ -10,6 +10,10 @@ body {
   color: #fff;
 }
 
+button {
+  cursor: pointer;
+}
+
 /* Hide scrollbar for a cleaner look */
 ::-webkit-scrollbar {
   width: 0px;
@@ -18,4 +22,44 @@ body {
 
 html {
   scroll-behavior: smooth;
+}
+
+body.lumaThemeActive .luma-checkout--overlay .luma-checkout--close-btn {
+  background: rgba(255, 255, 255, 0.16);
+  right: 18px;
+  top: 18px;
+}
+
+body.lumaThemeActive .luma-checkout--overlay .luma-checkout--modal {
+  width: min(calc(100% - 48px), 640px);
+  height: min(calc(100vh - 72px), 80vh);
+  max-width: 640px;
+  max-height: 80vh;
+  border-radius: 20px;
+  background: #0d0a1e !important;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.08),
+    0 1px 2px -1px rgba(0, 0, 0, 0.08),
+    0 2px 4px 0 rgba(0, 0, 0, 0.06),
+    0 40px 100px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+}
+
+@media (max-width: 500px) {
+  body.lumaThemeActive .luma-checkout--overlay {
+    padding: 16px 12px;
+  }
+
+  body.lumaThemeActive .luma-checkout--overlay .luma-checkout--modal {
+    width: calc(100% - 24px);
+    height: calc(100vh - 56px);
+    max-height: calc(100vh - 56px);
+    border-radius: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
