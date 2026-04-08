@@ -201,6 +201,27 @@ export default function Home() {
     openLumaCheckout();
   };
 
+  const handleSectionNavClick = (href: `#${string}`) => {
+    return (event: React.MouseEvent<HTMLAnchorElement>) => {
+      event.preventDefault();
+      setIsMobileNavOpen(false);
+
+      const target = document.querySelector<HTMLElement>(href);
+
+      if (!target) return;
+
+      const prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+
+      window.history.replaceState(null, "", href);
+      target.scrollIntoView({
+        behavior: prefersReducedMotion ? "auto" : "smooth",
+        block: "start",
+      });
+    };
+  };
+
   const closeMobileNav = () => {
     setIsMobileNavOpen(false);
   };
@@ -237,13 +258,14 @@ export default function Home() {
                 {link.label}
               </button>
             ) : (
-              <Link
+              <a
                 key={link.href}
                 href={link.href}
+                onClick={handleSectionNavClick(link.href)}
                 className="hover:text-zinc-400 transition-colors"
               >
                 {link.label}
-              </Link>
+              </a>
             ),
           )}
         </div>
@@ -288,14 +310,14 @@ export default function Home() {
                     {link.label}
                   </button>
                 ) : (
-                  <Link
+                  <a
                     key={link.href}
                     href={link.href}
-                    onClick={closeMobileNav}
+                    onClick={handleSectionNavClick(link.href)}
                     className="hover:text-zinc-400 transition-colors"
                   >
                     {link.label}
-                  </Link>
+                  </a>
                 ),
               )}
             </div>
@@ -525,9 +547,9 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.6 }}
                 viewport={{ once: true }}
-                className="absolute bottom-8 left-8 right-8 md:right-auto md:max-w-sm"
+                className="absolute bottom-4 left-4 right-4 md:bottom-8 md:left-8 md:right-auto md:max-w-sm"
               >
-                <p className="text-2xl md:text-3xl font-bold tracking-tight leading-snug">
+                <p className="text-lg md:text-3xl font-semibold lg:font-bold tracking-tight leading-snug">
                   &ldquo;Gain exclusive insights, explore frontier technologies,
                   unlock strategic partnerships.&rdquo;
                 </p>
@@ -605,7 +627,7 @@ export default function Home() {
       >
         <div className="w-full h-px bg-zinc-200" />
 
-        <div className="w-full overflow-hidden py-5 border-b border-zinc-200 bg-white">
+        <div className="w-full overflow-hidden py-3 lg:py-5 border-b border-zinc-200 bg-white">
           <motion.div
             animate={{ x: ["0%", "-50%"] }}
             transition={{ duration: 22, repeat: Infinity, ease: "linear" }}
@@ -614,7 +636,7 @@ export default function Home() {
             {Array.from({ length: 8 }).map((_, i) => (
               <span
                 key={i}
-                className="text-xs uppercase tracking-[0.3em] font-bold text-zinc-300 px-10"
+                className="text-[10px] lg:text-xs uppercase tracking-[0.3em] font-bold text-zinc-300 px-10"
               >
                 Executives &nbsp;·&nbsp; Founders &nbsp;·&nbsp; Innovators
                 &nbsp;·&nbsp; Visionaries &nbsp;·&nbsp; Investors &nbsp;·&nbsp;
@@ -736,10 +758,10 @@ export default function Home() {
         className="relative z-20 w-full min-h-screen bg-black overflow-hidden flex flex-col"
       >
         <div className="relative z-20 flex items-center justify-between px-6 md:px-10 py-6 border-b border-zinc-800">
-          <span className="text-xs uppercase tracking-[0.3em] text-zinc-500 font-semibold">
+          <span className="text-[10px] lg:text-xs uppercase tracking-[0.3em] text-zinc-500 font-semibold">
             Partnership
           </span>
-          <span className="text-xs uppercase tracking-[0.3em] text-zinc-500 font-semibold">
+          <span className="text-[10px] lg:text-xs uppercase tracking-[0.3em] text-zinc-500 font-semibold">
             ForgeTech Summit &apos;26
           </span>
         </div>
@@ -858,12 +880,12 @@ export default function Home() {
         </div>
 
         <div className="relative z-20 border-t border-zinc-800 px-6 md:px-10 py-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <p className="text-xs uppercase tracking-[0.25em] text-zinc-600">
+          <p className="text-[11px] lg:text-xs uppercase tracking-[0.25em] text-zinc-600">
             Limited Sponsorship Opportunities Available
           </p>
           <a
             href="mailto:hello@forgetechsummit.com"
-            className="text-xs uppercase tracking-[0.25em] text-zinc-400 hover:text-white transition-colors"
+            className="text-[11px] lg:text-xs uppercase tracking-[0.25em] text-zinc-400 hover:text-white transition-colors"
           >
             hello@forgetechsummit.com ↗
           </a>
