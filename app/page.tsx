@@ -1,17 +1,102 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "motion/react";
 import { ArrowUpRight, Calendar, MapPin, Menu } from "lucide-react";
 
+type NavMode = "all" | "hide-experience" | "hide-agenda" | "hide-all";
+
+const navLinks = [
+  { href: "#experience", label: "Experience" },
+  { href: "#agenda", label: "Agenda" },
+  { href: "#register", label: "Register" },
+] as const;
+
 export default function Home() {
   const partnerRef = useRef<HTMLElement>(null);
+  const [navMode, setNavMode] = useState<NavMode>("all");
   const { scrollYProgress: partnerScroll } = useScroll({
     target: partnerRef,
     offset: ["start end", "end start"],
   });
   const partnerImageY = useTransform(partnerScroll, [0, 1], ["-10%", "10%"]);
+
+  useEffect(() => {
+    const sections = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-nav-mode]")
+    );
+
+    if (!sections.length) return;
+
+    const isNavMode = (value: string | undefined): value is NavMode => {
+      return (
+        value === "all" ||
+        value === "hide-experience" ||
+        value === "hide-agenda" ||
+        value === "hide-all"
+      );
+    };
+
+    const updateNavMode = () => {
+      const viewportCenter = window.innerHeight / 2;
+      let nextMode: NavMode = "all";
+
+      sections.forEach((section) => {
+        const rect = section.getBoundingClientRect();
+
+        if (rect.top <= viewportCenter && rect.bottom >= viewportCenter) {
+          const mode = section.dataset.navMode;
+
+          if (isNavMode(mode)) {
+            nextMode = mode;
+          }
+        }
+      });
+
+      setNavMode((currentMode) =>
+        currentMode === nextMode ? currentMode : nextMode
+      );
+    };
+
+    let ticking = false;
+
+    const requestUpdate = () => {
+      if (ticking) return;
+
+      ticking = true;
+      window.requestAnimationFrame(() => {
+        updateNavMode();
+        ticking = false;
+      });
+    };
+
+    updateNavMode();
+
+    window.addEventListener("scroll", requestUpdate, { passive: true });
+    window.addEventListener("resize", requestUpdate);
+
+    return () => {
+      window.removeEventListener("scroll", requestUpdate);
+      window.removeEventListener("resize", requestUpdate);
+    };
+  }, []);
+
+  const visibleNavLinks = navLinks.filter(({ label }) => {
+    if (navMode === "hide-all") {
+      return false;
+    }
+
+    if (navMode === "hide-experience") {
+      return label !== "Experience";
+    }
+
+    if (navMode === "hide-agenda") {
+      return label !== "Agenda";
+    }
+
+    return true;
+  });
 
   return (
     <main className="relative bg-black w-full">
@@ -20,25 +105,25 @@ export default function Home() {
           FORGETECH
         </div>
         <div className="hidden md:flex gap-12 text-xs font-medium tracking-[0.2em] uppercase pointer-events-auto">
-          <a
-            href="#experience"
-            className="hover:text-zinc-400 transition-colors"
-          >
-            Experience
-          </a>
-          <a href="#agenda" className="hover:text-zinc-400 transition-colors">
-            Agenda
-          </a>
-          <a href="#register" className="hover:text-zinc-400 transition-colors">
-            Register
-          </a>
+          {visibleNavLinks.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              className="hover:text-zinc-400 transition-colors"
+            >
+              {link.label}
+            </a>
+          ))}
         </div>
         <button className="md:hidden pointer-events-auto">
           <Menu className="w-6 h-6" />
         </button>
       </nav>
 
-      <section className="sticky top-0 h-screen w-full bg-black flex flex-col justify-between p-6 md:p-10 overflow-hidden">
+      <section
+        data-nav-mode="all"
+        className="sticky top-0 h-screen w-full bg-black flex flex-col justify-between p-6 md:p-10 overflow-hidden"
+      >
         <div className="absolute inset-0 z-0">
           <Image
             src="https://picsum.photos/seed/fashionhero1/1920/1080?grayscale"
@@ -97,6 +182,7 @@ export default function Home() {
 
       <section
         id="experience"
+        data-nav-mode="hide-experience"
         className="relative min-h-screen w-full bg-zinc-900 flex items-center justify-center overflow-hidden py-24"
       >
         <div className="absolute inset-0 w-full h-full">
@@ -179,7 +265,11 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="about" className="relative z-20 w-full bg-black text-white">
+      <section
+        id="about"
+        data-nav-mode="hide-all"
+        className="relative z-20 w-full bg-black text-white"
+      >
         <div className="w-full h-px bg-zinc-800" />
 
         <div className="max-w-350 mx-auto px-6 md:px-10 py-24 md:py-40">
@@ -313,7 +403,10 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="relative z-20 w-full bg-white text-black overflow-hidden">
+      <section
+        data-nav-mode="hide-all"
+        className="relative z-20 w-full bg-white text-black overflow-hidden"
+      >
         <div className="w-full h-px bg-zinc-200" />
 
         <div className="w-full overflow-hidden py-5 border-b border-zinc-200 bg-white">
@@ -532,6 +625,7 @@ export default function Home() {
       <section
         id="partner"
         ref={partnerRef}
+        data-nav-mode="hide-all"
         className="relative z-20 w-full min-h-screen bg-black overflow-hidden flex flex-col"
       >
         <div className="relative z-20 flex items-center justify-between px-6 md:px-10 py-6 border-b border-zinc-800">
@@ -671,6 +765,7 @@ export default function Home() {
 
       <section
         id="agenda"
+        data-nav-mode="hide-agenda"
         className="sticky top-0 h-screen w-full bg-[#e5e5e5] text-black flex items-center justify-center overflow-hidden"
       >
         <div className="w-full max-w-350 mx-auto px-6 md:px-10">
@@ -754,6 +849,7 @@ export default function Home() {
 
       <section
         id="register"
+        data-nav-mode="all"
         className="sticky top-0 h-screen w-full bg-black text-white flex items-center justify-center overflow-hidden"
       >
         <div className="absolute inset-0 w-full h-full">
