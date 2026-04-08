@@ -37,6 +37,11 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         {children}
+        <script
+          id="luma-checkout"
+          src="https://embed.lu.ma/checkout-button.js"
+          async
+        ></script>
       </body>
     </html>
   );

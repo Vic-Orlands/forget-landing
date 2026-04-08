@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "motion/react";
 import { ArrowUpRight, Calendar, MapPin, Menu } from "lucide-react";
+import Link from "next/link";
 
 type NavMode = "all" | "hide-experience" | "hide-agenda" | "hide-all";
 
@@ -12,6 +13,9 @@ const navLinks = [
   { href: "#agenda", label: "Agenda" },
   { href: "#register", label: "Register" },
 ] as const;
+
+const LUMA_EVENT_ID = "evt-KSYNm1rNe5djJFX";
+const LUMA_EVENT_URL = `https://luma.com/event/${LUMA_EVENT_ID}`;
 
 export default function Home() {
   const partnerRef = useRef<HTMLElement>(null);
@@ -101,18 +105,27 @@ export default function Home() {
   return (
     <main className="relative bg-black w-full">
       <nav className="fixed top-0 left-0 right-0 z-50 flex justify-between items-center p-6 md:p-10 mix-blend-difference text-white pointer-events-none">
-        <div className="font-display font-bold text-2xl tracking-tighter pointer-events-auto">
+        <Link
+          href="/"
+          className="font-display font-bold text-2xl tracking-tighter pointer-events-auto"
+        >
           FORGETECH
-        </div>
+        </Link>
         <div className="hidden md:flex gap-12 text-xs font-medium tracking-[0.2em] uppercase pointer-events-auto">
           {visibleNavLinks.map((link) => (
-            <a
+            <Link
               key={link.href}
-              href={link.href}
+              href={link.href === "#register" ? LUMA_EVENT_URL : link.href}
+              data-luma-action={
+                link.href === "#register" ? "checkout" : undefined
+              }
+              data-luma-event-id={
+                link.href === "#register" ? LUMA_EVENT_ID : undefined
+              }
               className="hover:text-zinc-400 transition-colors"
             >
               {link.label}
-            </a>
+            </Link>
           ))}
         </div>
         <button className="md:hidden pointer-events-auto">
@@ -789,13 +802,18 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 0.4 }}
             viewport={{ once: true }}
           >
-            <button className="group relative inline-flex items-center justify-center px-10 py-5 bg-white text-black font-bold uppercase tracking-[0.2em] text-sm overflow-hidden rounded-full">
+            <Link
+              href={LUMA_EVENT_URL}
+              data-luma-action="checkout"
+              data-luma-event-id={LUMA_EVENT_ID}
+              className="group relative inline-flex items-center justify-center px-10 py-5 bg-white text-black font-bold uppercase tracking-[0.2em] text-sm overflow-hidden rounded-full"
+            >
               <span className="relative z-10 flex items-center gap-3">
                 Join the Summit{" "}
                 <ArrowUpRight className="w-5 h-5 group-hover:rotate-45 transition-transform duration-300" />
               </span>
               <div className="absolute inset-0 bg-zinc-200 transform scale-x-0 origin-left group-hover:scale-x-100 transition-transform ease-out duration-500"></div>
-            </button>
+            </Link>
           </motion.div>
 
           <motion.div
