@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "motion/react";
-import { ArrowUpRight, Calendar, MapPin, Menu } from "lucide-react";
+import { ArrowUpRight, Calendar, MapPin, Menu, X } from "lucide-react";
 import Link from "next/link";
 
 type NavMode = "all" | "hide-experience" | "hide-agenda" | "hide-all";
@@ -21,6 +21,7 @@ export default function Home() {
   const partnerRef = useRef<HTMLElement>(null);
   const heroVideoRef = useRef<HTMLVideoElement>(null);
   const lumaTriggerRef = useRef<HTMLAnchorElement>(null);
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [navMode, setNavMode] = useState<NavMode>("all");
   const { scrollYProgress: partnerScroll } = useScroll({
     target: partnerRef,
@@ -92,6 +93,22 @@ export default function Home() {
       document.body.classList.remove("lumaThemeActive");
     };
   }, []);
+
+  useEffect(() => {
+    if (!isMobileNavOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsMobileNavOpen(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isMobileNavOpen]);
 
   useEffect(() => {
     const sections = Array.from(
@@ -179,6 +196,15 @@ export default function Home() {
     );
   };
 
+  const handleRegisterClick = () => {
+    setIsMobileNavOpen(false);
+    openLumaCheckout();
+  };
+
+  const closeMobileNav = () => {
+    setIsMobileNavOpen(false);
+  };
+
   return (
     <main className="relative bg-black w-full">
       <a
@@ -205,8 +231,8 @@ export default function Home() {
               <button
                 key={link.href}
                 type="button"
-                onClick={openLumaCheckout}
-                className="hover:text-zinc-400 transition-colors"
+                onClick={handleRegisterClick}
+                className="hover:text-zinc-400 uppercase transition-colors"
               >
                 {link.label}
               </button>
@@ -221,10 +247,61 @@ export default function Home() {
             ),
           )}
         </div>
-        <button className="md:hidden pointer-events-auto">
-          <Menu className="w-6 h-6" />
+        <button
+          type="button"
+          aria-label={
+            isMobileNavOpen ? "Close navigation menu" : "Open navigation menu"
+          }
+          aria-expanded={isMobileNavOpen}
+          aria-controls="mobile-nav-panel"
+          onClick={() => setIsMobileNavOpen((open) => !open)}
+          className="md:hidden pointer-events-auto"
+        >
+          {isMobileNavOpen ? (
+            <X className="w-6 h-6" />
+          ) : (
+            <Menu className="w-6 h-6" />
+          )}
         </button>
       </nav>
+      {isMobileNavOpen ? (
+        <div className="md:hidden fixed inset-0 z-40 pt-24 bg-black/65">
+          <button
+            type="button"
+            aria-label="Close navigation menu"
+            onClick={closeMobileNav}
+            className="absolute inset-0 bg-black/70"
+          />
+          <div
+            id="mobile-nav-panel"
+            className="relative w-full text-center text-white shadow-lg"
+          >
+            <div className="flex flex-col gap-5 text-sm font-semibold uppercase tracking-[0.2em]">
+              {visibleNavLinks.map((link) =>
+                link.href === "#register" ? (
+                  <button
+                    key={link.href}
+                    type="button"
+                    onClick={handleRegisterClick}
+                    className="text-center uppercase hover:text-zinc-400 transition-colors"
+                  >
+                    {link.label}
+                  </button>
+                ) : (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={closeMobileNav}
+                    className="hover:text-zinc-400 transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                ),
+              )}
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       <section
         data-nav-mode="all"
