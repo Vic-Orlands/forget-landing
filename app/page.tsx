@@ -909,7 +909,7 @@ export default function Home() {
                 ],
               },
               {
-                time: "9:00AM",
+                time: "9:00AM East African Time",
                 title: "Ignite Insights",
                 desc: [
                   "Focused breakout sessions on AI, BFSI, digital infrastructure, and frontier technologies.",
@@ -918,7 +918,7 @@ export default function Home() {
                 ],
               },
               {
-                time: "East African Time",
+                time: "Nairobi, Kenya",
                 title: "Shape the Future",
                 desc: [
                   "Hands-on workshops with actionable takeaways",
