@@ -14,6 +14,36 @@ const navLinks = [
   { href: "#register", label: "Register" },
 ] as const;
 
+const agendaItems = [
+  {
+    time: "31st July, 2026",
+    title: "Forge Connections",
+    desc: [
+      "Opening keynote by a global thought leader.",
+      "Fireside chats with pioneering entrepreneurs.",
+      "Curated networking sessions to spark high-value connections.",
+    ],
+  },
+  {
+    time: "9:00AM East African Time",
+    title: "Ignite Insights",
+    desc: [
+      "Focused breakout sessions on AI, BFSI, digital infrastructure, and frontier technologies.",
+      "Executive roundtables for strategy and collaboration.",
+      "Panel discussions with industry disruptors.",
+    ],
+  },
+  {
+    time: "Nairobi, Kenya",
+    title: "Shape the Future",
+    desc: [
+      "Hands-on workshops with actionable takeaways",
+      "Curated experiences exploring Nairobi's innovation ecosystem.",
+      "Closing session celebrating connections, insights, and collaborations.",
+    ],
+  },
+] as const;
+
 const LUMA_EVENT_ID = "evt-KSYNm1rNe5djJFX";
 const LUMA_EVENT_URL = `https://luma.com/event/${LUMA_EVENT_ID}`;
 
@@ -895,7 +925,7 @@ export default function Home() {
       <section
         id="agenda"
         data-nav-mode="hide-agenda"
-        className="sticky top-0 h-screen w-full bg-[#e5e5e5] text-black flex items-center justify-center overflow-hidden"
+        className="sticky top-0 h-dvh w-full bg-[#e5e5e5] text-black flex items-center justify-center overflow-hidden"
       >
         <div className="w-full max-w-350 mx-auto px-6 md:px-10">
           <motion.div
@@ -903,54 +933,53 @@ export default function Home() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-16 lg:mb-24 gap-8"
+            className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-8 md:mb-12 lg:mb-24 gap-4 lg:gap-8"
           >
-            <h2 className="font-display text-6xl md:text-8xl lg:text-[10vw] leading-[0.8] font-bold tracking-tighter uppercase">
+            <h2 className="font-display text-5xl sm:text-6xl md:text-8xl lg:text-[10vw] leading-[0.8] font-bold tracking-tighter uppercase">
               Agenda
             </h2>
             <div className="text-left lg:text-right max-w-sm">
-              <p className="text-xl md:text-2xl font-medium tracking-tight">
+              <p className="text-lg md:text-2xl font-medium tracking-tight">
                 Curated Sessions
               </p>
-              <p className="text-zinc-500 mt-2">
+              <p className="text-sm md:text-base text-zinc-500 mt-2 leading-relaxed">
                 For the visionary mind. A front-row view of tomorrow&apos;s most
                 transformative opportunities.
               </p>
             </div>
           </motion.div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-16">
-            {[
-              {
-                time: "31st July, 2026",
-                title: "Forge Connections",
-                desc: [
-                  "Opening keynote by a global thought leader.",
-                  "Fireside chats with pioneering entrepreneurs.",
-                  "Curated networking sessions to spark high-value connections.",
-                ],
-              },
-              {
-                time: "9:00AM East African Time",
-                title: "Ignite Insights",
-                desc: [
-                  "Focused breakout sessions on AI, BFSI, digital infrastructure, and frontier technologies.",
-                  "Executive roundtables for strategy and collaboration.",
-                  "Panel discussions with industry disruptors.",
-                ],
-              },
-              {
-                time: "Nairobi, Kenya",
-                title: "Shape the Future",
-                desc: [
-                  "Hands-on workshops with actionable takeaways",
-                  "Curated experiences exploring Nairobi's innovation ecosystem.",
-                  "Closing session celebrating connections, insights, and collaborations.",
-                ],
-              },
-            ].map((item, i) => (
+          <div className="flex lg:hidden flex-col divide-y divide-black/10 border-y border-black/10">
+            {agendaItems.map((item, i) => (
               <motion.div
-                key={i}
+                key={item.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: i * 0.12 }}
+                viewport={{ once: true }}
+                className="grid grid-cols-[minmax(0,104px)_minmax(0,1fr)] gap-4 py-3"
+              >
+                <div className="pt-1 text-[10px] font-bold tracking-[0.18em] leading-4 uppercase text-zinc-500">
+                  {item.time}
+                </div>
+                <div>
+                  <h3 className="font-display text-lg font-bold uppercase leading-none mb-2">
+                    {item.title}
+                  </h3>
+                  <div className="space-y-1 text-[11px] leading-4 text-zinc-600">
+                    {item.desc.map((line) => (
+                      <p key={line}>{line}</p>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="hidden lg:grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-16">
+            {agendaItems.map((item, i) => (
+              <motion.div
+                key={item.title}
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: i * 0.2 }}
